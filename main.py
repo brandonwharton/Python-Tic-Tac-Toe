@@ -90,6 +90,12 @@ def make_move(name, symbol):
     # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
     # and right for columns. Moves must be entered as an input in row-column format matching those key names
     move = input(f"{name}, please make a move")
+
+    # First validation - Make sure values are separated by a hyphen
+    if '-' not in move:
+        print('Please use a hyphen to separate your row and column selections: Example top-right or middle-middle')
+        make_move(name, symbol)
+
     # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
     split_move = move.lower().replace(' ', '').split('-')
 
@@ -97,12 +103,20 @@ def make_move(name, symbol):
     column = split_move[1]
 
     # Validate move selection to ensure proper formatting of move input from user
-    if row not in ['top', 'middle', 'bottom'] or column not in ['left', 'middle', 'right']:
+    if row not in ['top', 'middle', 'bottom'] or column not in ['left', 'middle', 'right'] or gameboard[row][column] != ' ':
 
         # Find list of available moves and save them
+        move_list = []
+        for key in gameboard.keys():
+            for value in gameboard[key]:
+                if gameboard[key][value] == ' ':
+                    move_list.append(f'{key}-{value}')
+
+        print('That move is unavailable')
+        print('Available moves:', *move_list)
 
         # Print error message and recur the function
-        print('Invalid entry: Please try again')
+        # print('Invalid entry: Please try again')
         make_move(name, symbol)
 
     # Set the move chosen to the active player's symbol
