@@ -5,14 +5,14 @@ gameboard = {
     'bottom': {'left': ' ', 'middle': ' ', 'right': ' '}
 }
 
-current_is_x = True
+game_won = False
 
 def run_game():
     global gameboard
-    global current_is_x
+    global game_won
+
     player1 = input('Player 1, input your name', )
     player2 = input('Player 2, input your name', )
-    game_won = False
     active_player = player1
 
     print(f'Hello {player1} and {player2} and welcome to tic-tac-toe.')
@@ -33,13 +33,35 @@ def run_game():
         bottom = gameboard['bottom']
 
         if top['left'] == top['middle'] == top['right'] and top['left'] != ' ':
-            print(f"{player1} Won!")
-            game_won = True
+            game_over(active_player)
+        elif middle['left'] == middle['middle'] == middle['right'] and middle['left'] != ' ':
+            game_over(active_player)
+        elif bottom['left'] == bottom['middle'] == bottom['right'] and bottom['left'] != ' ':
+            game_over(active_player)
+        elif top['left'] == middle['left'] == bottom['left'] and top['left'] != ' ':
+            game_over(active_player)
+        elif top['middle'] == middle['middle'] == bottom['middle'] and top['middle'] != ' ':
+            game_over(active_player)
+        elif top['right'] == middle['right'] == bottom['right'] and top['right'] != ' ':
+            game_over(active_player)
+        elif top['left'] == middle['middle'] == bottom['right'] and top['left'] != ' ':
+            game_over(active_player)
+        elif top['right'] == middle['middle'] == bottom['left'] and top['right'] != ' ':
+            game_over(active_player)
 
+        # If game hasn't been won, switch active player before loop ends
         if active_player == player1:
             active_player = player2
         else:
             active_player = player1
+
+
+
+        # Function to end game
+        def game_over(player):
+            global game_won
+            print(f"{player} Won!")
+            game_won = True
 
 
 def build_board():
@@ -55,7 +77,6 @@ def build_board():
 
 def make_move(name, symbol):
     global gameboard
-    global current_is_x
 
     move = input(f"{name}, please make a move")
     split_move = move.replace(' ', '').split('-')
