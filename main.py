@@ -55,13 +55,11 @@ def run_game():
         else:
             active_player = player1
 
-
-
-        # Function to end game
-        def game_over(player):
-            global game_won
-            print(f"{player} Won!")
-            game_won = True
+    # Loop is now finished, prompt another game or end program
+    answer = input('Would you like to play again? Answer y for yes, anything else for no', )
+    if (answer == 'y'):
+        reset_game()
+        run_game()
 
 
 def build_board():
@@ -87,7 +85,22 @@ def make_move(name, symbol):
     gameboard[row][column] = symbol
 
 
+# Function to end game
+def game_over(player):
+    global game_won
+    print(f"{player} Won!")
+    game_won = True
 
+def reset_game():
+    global gameboard
+    global game_won
+
+    gameboard = {
+        'top': {'left': ' ', 'middle': ' ', 'right': ' '},
+        'middle': {'left': ' ', 'middle': ' ', 'right': ' '},
+        'bottom': {'left': ' ', 'middle': ' ', 'right': ' '}
+    }
+    game_won = False
 
 run_game()
 
