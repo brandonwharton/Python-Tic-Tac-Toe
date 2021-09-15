@@ -9,11 +9,11 @@ current_is_x = True
 
 def run_game():
     global gameboard
+    global current_is_x
     player1 = input('Player 1, input your name', )
     player2 = input('Player 2, input your name', )
     game_won = False
     active_player = player1
-
 
     print(f'Hello {player1} and {player2} and welcome to tic-tac-toe.')
     build_board()
@@ -21,12 +21,25 @@ def run_game():
         rows named top, middle, and bottom with columns named left, middle, right''')
 
     while game_won == False:
-        if current_is_x:
-            make_move(player1)
+        if active_player == player1:
+            make_move(player1, 'X')
         else:
-            make_move(player2)
+            make_move(player2, 'O')
 
         build_board()
+
+        top = gameboard['top']
+        middle = gameboard['middle']
+        bottom = gameboard['bottom']
+
+        if top['left'] == top['middle'] == top['right'] and top['left'] != ' ':
+            print(f"{player1} Won!")
+            game_won = True
+
+        if active_player == player1:
+            active_player = player2
+        else:
+            active_player = player1
 
 
 def build_board():
@@ -40,7 +53,7 @@ def build_board():
     print("_________")
     print(f"{bottom['left']} | {bottom['middle']} | {bottom['right']}")
 
-def make_move(name):
+def make_move(name, symbol):
     global gameboard
     global current_is_x
 
@@ -50,14 +63,7 @@ def make_move(name):
     row = split_move[0]
     column = split_move[1]
 
-    print('Row, column', row, column)
-
-    if current_is_x:
-        gameboard[row][column] = 'X'
-    else:
-        gameboard[row][column] = 'O'
-
-    current_is_x = not current_is_x
+    gameboard[row][column] = symbol
 
 
 
