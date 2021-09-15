@@ -1,4 +1,6 @@
 # A tic-tac-toe game
+
+# Set up the gameboard data and current game status at the global scope
 gameboard = {
     'top': {'left': ' ', 'middle': ' ', 'right': ' '},
     'middle': {'left': ' ', 'middle': ' ', 'right': ' '},
@@ -7,19 +9,25 @@ gameboard = {
 
 game_won = False
 
+
+# Main function to start and run the game
 def run_game():
+    #### Setup ####
     global gameboard
     global game_won
 
     player1 = input('Player 1, input your name', )
     player2 = input('Player 2, input your name', )
+    # Start player1 as the active player, active_player changes throughout the game as moves are made
     active_player = player1
 
+    #### Begin Game Prompts ####
     print(f'Hello {player1} and {player2} and welcome to tic-tac-toe.')
     build_board()
     print(f'''Please make a move by entering where you would like to go. Format should be row-column for 
         rows named top, middle, and bottom with columns named left, middle, right''')
 
+    # Game Logic
     while game_won == False:
         if active_player == player1:
             make_move(player1, 'X')
@@ -62,6 +70,7 @@ def run_game():
         run_game()
 
 
+# Function that prints out the current gameboard in the console when called
 def build_board():
     global gameboard
     top = gameboard['top']
@@ -73,15 +82,30 @@ def build_board():
     print("_________")
     print(f"{bottom['left']} | {bottom['middle']} | {bottom['right']}")
 
+
+# Function that handles the logic and validation for taking game actions
 def make_move(name, symbol):
     global gameboard
 
+    # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
+    # and right for columns. Moves must be entered as an input in row-column format matching those key names
     move = input(f"{name}, please make a move")
-    split_move = move.replace(' ', '').split('-')
+    # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
+    split_move = move.lower().replace(' ', '').split('-')
 
     row = split_move[0]
     column = split_move[1]
 
+    # Validate move selection to ensure proper formatting of move input from user
+    if row not in ['top', 'middle', 'bottom'] or column not in ['left', 'middle', 'right']:
+
+        # Find list of available moves and save them
+
+        # Print error message and recur the function
+        print('Invalid entry: Please try again')
+        make_move(name, symbol)
+
+    # Set the move chosen to the active player's symbol
     gameboard[row][column] = symbol
 
 
