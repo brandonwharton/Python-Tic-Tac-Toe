@@ -12,7 +12,7 @@ game_won = False
 
 # Main function to start and run the game
 def run_game():
-    #### Setup ####
+    # Setup
     global gameboard
     global game_won
 
@@ -21,25 +21,29 @@ def run_game():
     # Start player1 as the active player, active_player changes throughout the game as moves are made
     active_player = player1
 
-    #### Begin Game Prompts ####
+    # Begin Game Prompts
     print(f'Hello {player1} and {player2} and welcome to tic-tac-toe.')
     build_board()
     print(f'''Please make a move by entering where you would like to go. Format should be row-column for 
         rows named top, middle, and bottom with columns named left, middle, right''')
 
     # Game Logic
-    while game_won == False:
+    while not game_won:
+        # Call the make_move function for whichever player is taking their turn
         if active_player == player1:
             make_move(player1, 'X')
         else:
             make_move(player2, 'O')
 
+        # Display board in console
         build_board()
 
         top = gameboard['top']
         middle = gameboard['middle']
         bottom = gameboard['bottom']
 
+        # Check win conditions after each new move, ending the game if game is won or if game is tied
+        # Game is won if three spaces in a row are the same symbol
         if top['left'] == top['middle'] == top['right'] and top['left'] != ' ':
             game_over(active_player)
         elif middle['left'] == middle['middle'] == middle['right'] and middle['left'] != ' ':
@@ -56,6 +60,11 @@ def run_game():
             game_over(active_player)
         elif top['right'] == middle['middle'] == bottom['left'] and top['right'] != ' ':
             game_over(active_player)
+        elif ' ' not in top.values() and ' ' not in middle.values() and ' ' not in bottom.values():
+            print("Cat's game!")
+            game_won = True
+            continue
+
 
         # If game hasn't been won, switch active player before loop ends
         if active_player == player1:
@@ -86,49 +95,60 @@ def build_board():
 # Function that handles the logic and validation for taking game actions
 def make_move(name, symbol):
     global gameboard
+    move_successful = False
 
-    # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
-    # and right for columns. Moves must be entered as an input in row-column format matching those key names
-    move = input(f"{name}, please make a move")
+    while not move_successful:
+        # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
+        # and right for columns. Moves must be entered as an input in row-column format matching those key names
+        move = input(f"{name}, please make a move")
 
-    # First validation - Make sure values are separated by a hyphen
-    if '-' not in move:
-        print('Please use a hyphen to separate your row and column selections: Example top-right or middle-middle')
-        make_move(name, symbol)
+        # First validation - Make sure values are separated by a hyphen
+        if '-' not in move:
+            print('Please use a hyphen to separate your row and column selections: Example top-right or middle-middle')
+            continue
 
-    # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
-    split_move = move.lower().replace(' ', '').split('-')
+        # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
+        split_move = move.lower().replace(' ', '').split('-')
+        print('Split move:', split_move)
 
-    row = split_move[0]
-    column = split_move[1]
+        row = split_move[0]
+        column = split_move[1]
 
-    # Validate move selection to ensure proper formatting of move input from user
-    if row not in ['top', 'middle', 'bottom'] or column not in ['left', 'middle', 'right'] or gameboard[row][column] != ' ':
+        # Validate move selection to ensure proper formatting of move input from user, and make sure space isn't
+        # already taken
+        if (
+                row not in ['top', 'middle', 'bottom']
+                or column not in ['left', 'middle', 'right']
+                or gameboard[row][column] != ' '
+        ):
+            # Find list of available moves and save them to be displayed in console
+            move_list = []
+            for key in gameboard.keys():
+                for value in gameboard[key]:
+                    if gameboard[key][value] == ' ':
+                        move_list.append(f'{key}-{value}')
 
-        # Find list of available moves and save them
-        move_list = []
-        for key in gameboard.keys():
-            for value in gameboard[key]:
-                if gameboard[key][value] == ' ':
-                    move_list.append(f'{key}-{value}')
-
-        print('That move is unavailable')
-        print('Available moves:', *move_list)
-
-        # Print error message and recur the function
-        # print('Invalid entry: Please try again')
-        make_move(name, symbol)
-
-    # Set the move chosen to the active player's symbol
-    gameboard[row][column] = symbol
+            # Display the gameboard in the console, print out the available move list for user to choose from and
+            # restart the loop
+            build_board()
+            print('That move is unavailable')
+            print('Available moves:', *move_list)
+            continue
 
 
-# Function to end game
+        # Flip the loop condition to continue game before finalizing the active player's move
+        if row in ['top', 'middle', 'bottom'] and column in ['left', 'middle', 'right']:
+            move_successful = True
+            gameboard[row][column] = symbol
+
+
+# Function to display the game winner and flip the game's loop condition
 def game_over(player):
     global game_won
     print(f"{player} Won!")
     game_won = True
 
+# Function to reset the gameboard in order to allow for game restarts
 def reset_game():
     global gameboard
     global game_won
@@ -139,6 +159,7 @@ def reset_game():
         'bottom': {'left': ' ', 'middle': ' ', 'right': ' '}
     }
     game_won = False
+
 
 run_game()
 
