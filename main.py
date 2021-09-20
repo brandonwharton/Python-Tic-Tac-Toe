@@ -56,6 +56,11 @@ def run_game():
             game_over(active_player)
         elif top['right'] == middle['middle'] == bottom['left'] and top['right'] != ' ':
             game_over(active_player)
+        elif ' ' not in top.values() and ' ' not in middle.values() and ' ' not in bottom.values():
+            print("Cat's game!")
+            game_won = True
+            continue
+
 
         # If game hasn't been won, switch active player before loop ends
         if active_player == player1:
@@ -86,41 +91,47 @@ def build_board():
 # Function that handles the logic and validation for taking game actions
 def make_move(name, symbol):
     global gameboard
+    move_successful = False
 
-    # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
-    # and right for columns. Moves must be entered as an input in row-column format matching those key names
-    move = input(f"{name}, please make a move")
+    row = ' '
+    column = ' '
 
-    # First validation - Make sure values are separated by a hyphen
-    if '-' not in move:
-        print('Please use a hyphen to separate your row and column selections: Example top-right or middle-middle')
-        make_move(name, symbol)
+    while not move_successful:
+        # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
+        # and right for columns. Moves must be entered as an input in row-column format matching those key names
+        move = input(f"{name}, please make a move")
 
-    # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
-    split_move = move.lower().replace(' ', '').split('-')
+        # First validation - Make sure values are separated by a hyphen
+        if '-' not in move:
+            print('Please use a hyphen to separate your row and column selections: Example top-right or middle-middle')
+            continue
 
-    row = split_move[0]
-    column = split_move[1]
+        # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
+        split_move = move.lower().replace(' ', '').split('-')
+        print('Split move:', split_move)
 
-    # Validate move selection to ensure proper formatting of move input from user
-    if row not in ['top', 'middle', 'bottom'] or column not in ['left', 'middle', 'right'] or gameboard[row][column] != ' ':
+        row = split_move[0]
+        column = split_move[1]
 
-        # Find list of available moves and save them
-        move_list = []
-        for key in gameboard.keys():
-            for value in gameboard[key]:
-                if gameboard[key][value] == ' ':
-                    move_list.append(f'{key}-{value}')
+        # Validate move selection to ensure proper formatting of move input from user
+        if row not in ['top', 'middle', 'bottom'] or column not in ['left', 'middle', 'right'] or gameboard[row][column] != ' ':
+            # Find list of available moves and save them
+            move_list = []
+            for key in gameboard.keys():
+                for value in gameboard[key]:
+                    if gameboard[key][value] == ' ':
+                        move_list.append(f'{key}-{value}')
 
-        print('That move is unavailable')
-        print('Available moves:', *move_list)
+            build_board()
+            print('That move is unavailable')
+            print('Available moves:', *move_list)
+            continue
 
-        # Print error message and recur the function
-        # print('Invalid entry: Please try again')
-        make_move(name, symbol)
 
-    # Set the move chosen to the active player's symbol
-    gameboard[row][column] = symbol
+        # Set the move chosen to the active player's symbol
+        if row in ['top', 'middle', 'bottom'] and column in ['left', 'middle', 'right']:
+            move_successful = True
+            gameboard[row][column] = symbol
 
 
 # Function to end game
