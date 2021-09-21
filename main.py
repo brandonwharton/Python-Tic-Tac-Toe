@@ -16,8 +16,8 @@ def run_game():
     global gameboard
     global game_won
 
-    player1 = input('Player 1, input your name', )
-    player2 = input('Player 2, input your name', )
+    player1 = input('Player 1, input your name:  ', )
+    player2 = input('Player 2, input your name:  ', )
     # Start player1 as the active player, active_player changes throughout the game as moves are made
     active_player = player1
 
@@ -73,7 +73,7 @@ def run_game():
             active_player = player1
 
     # Loop is now finished, prompt another game or end program
-    answer = input('Would you like to play again? Answer y for yes, anything else for no', )
+    answer = input('Would you like to play again? Answer y for yes, anything else for no:  ', )
     if (answer == 'y'):
         reset_game()
         run_game()
@@ -100,7 +100,7 @@ def make_move(name, symbol):
     while not move_successful:
         # Required formatting for moves matches the dictionary values: top, middle and bottom for rows, and left, middle
         # and right for columns. Moves must be entered as an input in row-column format matching those key names
-        move = input(f"{name}, please make a move")
+        move = input(f"{name} (symbol {symbol}), please make a move:  ")
 
         # First validation - Make sure values are separated by a hyphen
         if '-' not in move:
@@ -109,7 +109,6 @@ def make_move(name, symbol):
 
         # Remove whitespace and save the move as a list in [row_name, column_name] format in lowercase
         split_move = move.lower().replace(' ', '').split('-')
-        print('Split move:', split_move)
 
         row = split_move[0]
         column = split_move[1]
